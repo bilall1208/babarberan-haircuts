@@ -1,0 +1,50 @@
+/* Cetak laporan A4 */
+@page { size: A4; margin: 14mm 12.7mm 18mm; }
+@page { @bottom-right { content: counter(page) " / " counter(pages); font: 400 10px Inter, sans-serif; color: #666; } }
+
+.print-body { background: var(--hover-bg); }
+.print-actions { display: flex; gap: 12px; justify-content: center; padding: 16px; }
+
+.sheet { width: 794px; min-height: 1123px; margin: 0 auto 32px; padding: 48px; background: var(--white);
+         display: flex; flex-direction: column; gap: 16px; }
+.sheet__header { display: flex; align-items: center; justify-content: space-between; }
+.sheet__header > span { font-size: 11px; font-weight: 500; }
+
+.sheet__title { display: flex; flex-direction: column; gap: 4px; }
+.sheet__title p  { font-size: 10px; color: var(--muted); }
+.sheet__title h1 { font-size: 32px; font-weight: 600; line-height: 1.4; }
+
+.sheet__meta { display: flex; justify-content: space-between; }
+.sheet__meta div, .sheet__summary div { display: flex; flex-direction: column; gap: 4px; }
+.k { font-size: 10px; color: var(--muted); }
+.v { font-size: 12px; }
+
+.sheet__disclaimer { background: var(--hover-bg); padding: 10px; font-size: 10px; }
+
+.sheet__summary { display: flex; gap: 24px; padding-block: 12px; }
+.sheet__summary div { flex: 1; min-width: 0; gap: 8px; }
+.big { font-size: 28px; font-weight: 600; }
+
+.sheet__table { width: 100%; border-collapse: collapse; }
+.sheet__table th { height: 44px; background: var(--hover-bg); font-size: 10px; font-weight: 600; text-align: left; padding-inline: 6px; }
+.sheet__table td { height: 44px; border-bottom: 1px solid var(--line); font-size: 11px; padding-inline: 6px; }
+.sheet__table th:first-child, .sheet__table td:first-child { padding-left: 12px; width: 70px; }
+.sheet__table th:last-child,  .sheet__table td:last-child  { padding-right: 12px; width: 95px; }
+.sheet__table td.muted  { color: var(--muted); }
+.sheet__table td.name   { font-weight: 500; }
+.sheet__table td.strong { font-weight: 600; }
+.sheet__table thead { display: table-header-group; }
+.sheet__table tr { break-inside: avoid; }
+
+.sheet__grand { display: flex; justify-content: space-between; align-items: flex-start; padding-block: 12px; border-block: 1px solid var(--ink); font-weight: 600; }
+.sheet__grand span { font-size: 12px; }
+.sheet__grand strong { font-size: 20px; font-weight: 600; }
+
+.sheet__note { font-size: 10px; color: var(--muted); }
+.sheet__footer { margin-top: auto; padding-top: 40px; display: flex; flex-direction: column; gap: 12px; font-size: 10px; color: var(--muted); }
+
+@media print {
+  .no-print { display: none !important; }
+  .print-body { background: none; }
+  .sheet { width: auto; min-height: 0; margin: 0; padding: 0; }
+}

@@ -1,0 +1,30 @@
+/* Struk thermal 80mm (untuk 58mm: ganti size jadi 58mm auto dan .struk width jadi 219px) */
+@page { size: 80mm auto; margin: 0; }
+
+.struk-body { background: var(--hover-bg); }
+.struk-actions { display: flex; gap: 12px; justify-content: center; padding: 16px; }
+
+.struk {
+  width: 302px; margin: 0 auto 32px; padding: 20px 16px 24px; background: #fff; color: #000;
+  font-size: 12px; line-height: 1.4; font-variant-numeric: tabular-nums;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.struk__brand { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.struk__brand .brand-logo { --logo-h: 44px; justify-content: center; }
+.struk__name { font-size: 14px; font-weight: 700; text-transform: uppercase; }
+.struk__meta { font-size: 10px; }
+
+.struk__rule { border-top: 1px dashed #000; }
+.struk__rows { display: flex; flex-direction: column; gap: 2px; }
+.struk__row { display: flex; justify-content: space-between; gap: 12px; }
+.struk__row span:last-child { text-align: right; }
+.struk__item { display: flex; flex-direction: column; gap: 2px; }
+.struk__item-name { font-weight: 600; }
+.struk__total { font-size: 16px; font-weight: 700; }
+.struk__foot { display: flex; flex-direction: column; gap: 2px; text-align: center; font-size: 10px; }
+
+@media print {
+  .no-print { display: none !important; }
+  .struk-body { background: #fff; }
+  .struk { width: auto; margin: 0; padding: 4mm 4mm 8mm; }
+}
