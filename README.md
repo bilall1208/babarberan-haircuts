@@ -1,67 +1,219 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Babarberan Haircuts
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Website company profile, sistem kasir, dan laporan rekap pendapatan
+untuk **Babarberan Haircuts**. Proyek ini dikembangkan sebagai bagian
+dari tugas Projek Kreatif Kewirausahaan (PKK) menggunakan Laravel 11 dan
+MySQL.
 
-## About Laravel
+## Tentang Proyek
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Babarberan Haircuts merupakan usaha barbershop milik Nurman Taruna yang
+berdiri pada 25 Desember 2020. Aplikasi ini dirancang untuk membantu
+penyampaian informasi usaha sekaligus mendukung pengelolaan layanan dan
+pencatatan transaksi.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Website Publik
 
-## Learning Laravel
+-   Menampilkan profil dan informasi Babarberan Haircuts.
+-   Menampilkan daftar layanan beserta harga.
+-   Menampilkan galeri hasil potong rambut.
+-   Menampilkan informasi kontak, lokasi, dan jam operasional.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Halaman Admin
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+-   Login admin.
+-   Dashboard pengelolaan.
+-   Mengelola informasi profil usaha.
+-   Mengelola data layanan dan harga (tambah, lihat, ubah, hapus).
+-   Mencatat transaksi pelanggan.
+-   Melihat dan mencetak laporan rekap pendapatan.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+> Catatan: daftar fitur di atas merupakan ruang lingkup proyek.
+> Sesuaikan bagian ini dengan fitur yang sudah benar-benar tersedia pada
+> versi aplikasi yang sedang digunakan.
 
-## Laravel Sponsors
+## Teknologi
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+-   **Framework:** Laravel 11
+-   **Bahasa pemrograman:** PHP
+-   **Database:** MySQL
+-   **Database management:** phpMyAdmin
+-   **Frontend:** Blade, HTML, CSS, dan JavaScript
 
-### Premium Partners
+## Persyaratan
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Pastikan perangkat sudah memiliki: - PHP yang sesuai dengan kebutuhan
+Laravel 11. - Composer. - MySQL atau MariaDB. - Node.js dan NPM (jika
+menggunakan Vite atau pengelolaan aset frontend). - Git (opsional).
 
-## Contributing
+## Instalasi dan Menjalankan Proyek
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1.  Clone repository:
 
-## Code of Conduct
+    ``` bash
+    git clone <URL-REPOSITORY>
+    ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+2.  Masuk ke folder proyek:
 
-## Security Vulnerabilities
+    ``` bash
+    cd babarberan-haircuts
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+3.  Install dependency PHP:
 
-## License
+    ``` bash
+    composer install
+    ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-"# babarberan-haircuts" 
+4.  Salin file konfigurasi environment:
+
+    ``` bash
+    cp .env.example .env
+    ```
+
+    Pada Windows, file `.env.example` juga dapat disalin secara manual
+    menjadi `.env`.
+
+5.  Buat database MySQL melalui phpMyAdmin, misalnya dengan nama:
+
+    ``` text
+    babarberan_haircuts
+    ```
+
+6.  Atur koneksi database pada file `.env`:
+
+    ``` env
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=babarberan_haircuts
+    DB_USERNAME=root
+    DB_PASSWORD=
+    ```
+
+    Sesuaikan `DB_USERNAME` dan `DB_PASSWORD` dengan konfigurasi MySQL
+    di perangkat masing-masing.
+
+7.  Generate application key:
+
+    ``` bash
+    php artisan key:generate
+    ```
+
+8.  Jalankan migration:
+
+    ``` bash
+    php artisan migrate
+    ```
+
+    Jika proyek menyediakan seeder dan ingin mengisi data awal,
+    jalankan:
+
+    ``` bash
+    php artisan db:seed
+    ```
+
+9.  Install dependency frontend (jika diperlukan):
+
+    ``` bash
+    npm install
+    npm run build
+    ```
+
+    Untuk mode pengembangan frontend:
+
+    ``` bash
+    npm run dev
+    ```
+
+10. Jalankan server Laravel:
+
+    ``` bash
+    php artisan serve
+    ```
+
+11. Buka alamat berikut di browser:
+
+    ``` text
+    http://127.0.0.1:8000
+    ```
+
+## Struktur Direktori
+
+Beberapa direktori penting pada Laravel:
+
+``` text
+app/
+  Http/
+    Controllers/    # Controller aplikasi
+  Models/           # Model database
+
+database/
+  migrations/       # Struktur tabel database
+  seeders/          # Data awal (jika tersedia)
+
+public/
+  css/              # File CSS publik
+  images/           # Gambar publik (jika digunakan)
+
+resources/
+  views/             # Template Blade
+  css/               # Aset CSS
+  js/                # Aset JavaScript
+
+routes/
+  web.php            # Definisi route website
+
+.env                 # Konfigurasi lokal (jangan diunggah)
+```
+
+Struktur aktual dapat berbeda mengikuti pengembangan aplikasi.
+
+## Informasi Layanan
+
+Harga layanan yang menjadi acuan informasi usaha:
+
+  Layanan                        Harga
+  ------------ -----------------------
+  Dewasa                      Rp25.000
+  SMP/SMA                     Rp20.000
+  Anak-anak                   Rp15.000
+  Cat Rambut     Rp100.000 / Rp200.000
+
+Jam operasional: pukul 13.00 sampai selesai, Selasa--Minggu.\
+Hari libur: Senin.
+
+Pelayanan dilakukan secara langsung (*walk-in*). Website ini tidak
+menyediakan pemesanan atau booking online.
+
+## Pengembangan
+
+Kontribusi dan pengembangan dapat dilakukan dengan membuat branch baru,
+menguji perubahan, lalu mengirimkan pull request. Pastikan perubahan
+database disertai migration yang sesuai.
+
+## Keamanan dan Konfigurasi
+
+-   Jangan membagikan file `.env` atau kredensial database.
+-   Jangan mengunggah `APP_KEY`, password, atau data pribadi ke
+    repository publik.
+-   Gunakan konfigurasi database masing-masing saat menjalankan
+    aplikasi.
+-   Pastikan validasi input dan pembatasan akses admin diterapkan pada
+    aplikasi.
+
+## Tim Pengembang
+
+Developed independently by:
+- [Bilal Fahrezi]
+
+Project: Projek Kreatif Kewirausahaan (PKK)
+Major: Rekayasa Perangkat Lunak (RPL)
+
+## Lisensi
+
+Proyek ini dibuat untuk keperluan pembelajaran dan tugas Projek Kreatif
+Kewirausahaan (PKK).
