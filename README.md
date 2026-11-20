@@ -115,8 +115,13 @@ menggunakan Vite atau pengelolaan aset frontend). - Git (opsional).
     ``` bash
     php artisan db:seed
     ```
+9. Buat tautan public/storage:
 
-9.  Install dependency frontend (jika diperlukan):
+    ``` bash
+    php artisan storage:link
+    ```
+
+10.  Install dependency frontend (jika diperlukan):
 
     ``` bash
     npm install
@@ -129,13 +134,13 @@ menggunakan Vite atau pengelolaan aset frontend). - Git (opsional).
     npm run dev
     ```
 
-10. Jalankan server Laravel:
+11. Jalankan server Laravel:
 
     ``` bash
     php artisan serve
     ```
 
-11. Buka alamat berikut di browser:
+12. Buka alamat berikut di browser:
 
     ``` text
     http://127.0.0.1:8000
