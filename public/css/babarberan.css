@@ -882,3 +882,68 @@ textarea.field__control { field-sizing: content; }   /* tinggi mengikuti isi (Ch
 
 .t-actions { width: 96px; }
 .field__control[readonly] { background: var(--hover-bg); cursor: not-allowed; }
+
+.page-heading__actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+
+@media (max-width: 1023px) {
+  .page-heading__actions { flex-direction: column; width: 100%; }
+}
+
+/* ==========================================================
+   Pembayaran
+   ========================================================== */
+[hidden] { display: none !important; }
+
+.pay-options { display: flex; gap: 8px; }
+.pay-option { flex: 1; position: relative; }
+.pay-option input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; margin: 0; }
+.pay-option span {
+  display: flex; align-items: center; justify-content: center; height: 52px;
+  background: var(--white); border: 1px solid var(--line); font-size: 13px; font-weight: 600;
+}
+.pay-option input:checked + span { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.pay-option input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.change-box { min-height: 52px; display: flex; align-items: center; padding: 0 14px; background: var(--hover-bg); font-size: 14px; font-weight: 600; }
+
+.quick-cash { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { padding: 8px 12px; border: 1px solid var(--ink); font-size: 12px; font-weight: 600; line-height: 1.4; }
+.chip:hover { background: var(--hover-bg); }
+
+.saved__pay { display: flex; gap: 32px; flex-wrap: wrap; }
+.saved__pay > div { display: flex; flex-direction: column; gap: 4px; }
+.saved__pay .k { font-size: 10px; color: var(--muted); }
+.saved__pay .v { font-size: 16px; font-weight: 500; }
+.saved__pay .v--strong { font-weight: 700; }
+
+/* ==========================================================
+   Transaksi: banyak layanan per struk
+   ========================================================== */
+.items { display: flex; flex-direction: column; gap: 20px; }
+.item-row { display: flex; flex-direction: column; gap: 16px; padding: 20px; border: 1px solid var(--line); }
+.item-row__head { display: flex; justify-content: space-between; align-items: center; }
+.item-row__no { font-size: 11px; font-weight: 600; color: var(--muted); }
+.item-row__remove { font-size: 12px; font-weight: 500; color: var(--muted); }
+.item-row__remove:hover { color: var(--ink); text-decoration: underline; }
+
+/* riwayat: satu baris bisa memuat beberapa layanan */
+.table__row { height: auto; min-height: 62px; padding-block: 12px; }
+.t-method { width: 80px; flex-shrink: 0; }
+.t-lines { display: flex; flex-direction: column; gap: 4px; }
+.t-line { display: flex; gap: 10px; align-items: baseline; }
+.t-line b { font-weight: 500; }
+.t-line em { font-style: normal; font-weight: 400; font-size: 11px; color: var(--muted); }
+
+.saved__items { display: flex; flex-direction: column; gap: 16px; }
+.saved__item { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.saved__subtotal { font-size: 16px; font-weight: 500; white-space: nowrap; }
+.saved__label { font-size: 12px; font-weight: 600; }
+
+.method-summary { display: flex; gap: 32px; }
+.method-summary__item { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding-top: 12px; border-top: 1px solid var(--line); }
+.method-summary .k { font-size: 10px; color: var(--muted); }
+.method-summary strong { font-size: 18px; font-weight: 600; }
+
+@media (max-width: 1023px) {
+  .method-summary { flex-direction: column; gap: 16px; }
+}

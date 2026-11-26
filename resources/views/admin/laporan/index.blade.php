@@ -5,11 +5,9 @@
 
 @section('content')
 
-    <div class="page-heading">
-        <div class="page-heading__text">
-            <h1 class="page-heading__title">Laporan transaksi.</h1>
-            <p class="page-heading__sub">Tinjau pendapatan berdasarkan periode dan layanan.</p>
-        </div>
+    <div class="page-heading__actions">
+        <x-button variant="secondary" :href="route('admin.laporan.excel', request()->query())" icon="download">Unduh Excel</x-button>
+        <x-button variant="secondary" :href="route('admin.laporan.pdf', request()->query())" icon="download">Unduh PDF</x-button>
         <x-button :href="route('admin.laporan.cetak', request()->query())" icon="printer" target="_blank" rel="noopener">Cetak laporan</x-button>
     </div>
 
@@ -62,6 +60,15 @@
         </div>
     </div>
 
+    <div class="method-summary">
+        @foreach ($perMetode as $m)
+            <div class="method-summary__item">
+                <span class="k">{{ strtoupper($m['label']) }} · {{ $m['jml'] }} transaksi</span>
+                <strong>@rp($m['total'])</strong>
+            </div>
+        @endforeach
+    </div>
+
     @if ($baris->isEmpty())
 
         <div class="empty-state">
@@ -81,6 +88,7 @@
                 <div class="table__head">
                     <span class="t-id">ID</span><span class="t-date">TANGGAL</span><span class="t-name">LAYANAN</span>
                     <span class="t-price">HARGA</span><span class="t-qty">JML</span><span class="t-total">TOTAL</span>
+                    <span class="t-method">METODE</span>
                 </div>
 
                 @foreach ($baris as $b)
@@ -90,6 +98,7 @@
                         <span class="t-name">{{ $b->nama_layanan }}</span>
                         <span class="t-price">@rp($b->harga)</span>
                         <span class="t-qty">{{ $b->qty }}</span>
+                        <span class="t-method">{{ $labelMetode[$b->metode] ?? $b->metode }}</span>
                         <span class="t-total">@rp($b->subtotal)</span>
                     </div>
                 @endforeach
@@ -98,8 +107,7 @@
             <div class="record-list show-mobile">
                 @foreach ($baris as $b)
                     <div class="record">
-                        <p class="record__meta">TRX-{{ str_pad($b->transaksi_id, 3, '0', STR_PAD_LEFT) }} /
-                            {{ \Carbon\Carbon::parse($b->tgl)->translatedFormat('d M Y') }}</p>
+                        <p class="record__meta">TRX-{{ str_pad($b->transaksi_id, 3, '0', STR_PAD_LEFT) }} / {{ \Carbon\Carbon::parse($b->tgl)->translatedFormat('d M Y') }} / {{ $labelMetode[$b->metode] ?? $b->metode }}</p>
                         <div class="record__amount">
                             <span class="record__name">{{ $b->nama_layanan }}</span>
                             <span class="record__total">@rp($b->subtotal)</span>

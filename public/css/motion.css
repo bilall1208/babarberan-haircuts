@@ -1,0 +1,145 @@
+/* ==========================================================
+   MOTION — animasi & efek hover (tanpa library, semua lokal)
+   Muat SETELAH babarberan.css. Untuk mematikan semuanya,
+   cukup lepas link motion.css dan motion.js dari layout.
+   ========================================================== */
+:root { --ease: cubic-bezier(.2, .7, .2, 1); }
+
+@keyframes rise    { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes fade    { from { opacity: 0; } to { opacity: 1; } }
+@keyframes unveil  { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+@keyframes settle  { from { transform: scale(1.08); } to { transform: scale(1); } }
+@keyframes pop     { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes drop    { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@keyframes grow    { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes toastIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+@keyframes menuIn  { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Tombol ---------- */
+.btn { transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .15s ease; }
+.btn:active { transform: scale(.98); }
+.btn .icon { transition: transform .3s var(--ease); }
+
+/* ---------- Hero landing: masuk berurutan saat halaman dibuka ---------- */
+.hero-title__meta     { animation: fade .8s ease .05s both; }
+.hero-title__headline { animation: rise .9s var(--ease) .1s both; }
+.hero-intro__tagline  { animation: rise .8s var(--ease) .3s both; }
+.hero-intro__text     { animation: rise .8s var(--ease) .4s both; }
+.hero-intro > .btn,
+.hero-intro__note,
+.hero-composition > .btn { animation: rise .8s var(--ease) .5s both; }
+.hero-photo           { overflow: hidden; animation: unveil 1s cubic-bezier(.7, 0, .2, 1) .25s both; }
+.hero-photo img       { animation: settle 1.5s ease-out .25s both; }
+.hero-footnote        { animation: fade 1s ease .75s both; }
+
+/* ---------- Muncul saat di-scroll (kelas diberikan oleh motion.js) ---------- */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity .7s var(--ease) var(--rd, 0ms), transform .7s var(--ease) var(--rd, 0ms);
+}
+.reveal--img { transform: scale(.97); }
+.reveal.is-in { opacity: 1; transform: none; }
+
+/* ---------- Navigasi publik ---------- */
+.pubnav__links a { position: relative; display: inline-grid; padding-block: 4px; }
+.pubnav__links a::before { content: attr(data-label); font-weight: 700; height: 0; overflow: hidden; visibility: hidden; } /* cegah geser saat menjadi tebal */
+.pubnav__links a::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: right; transition: transform .35s var(--ease);
+}
+.pubnav__links a.is-active::after { transform: scaleX(1); transform-origin: left; }
+.pubnav__links a { transition: color .2s ease; }
+
+.brand-logo { transition: opacity .2s ease; }
+a.brand-logo:hover { opacity: .7; }
+
+/* ---------- Menu mobile ---------- */
+.mobile-menu.is-open { animation: menuIn .28s var(--ease); }
+.mobile-menu.is-open .mobile-menu__link { animation: rise .45s var(--ease) both; }
+.mobile-menu.is-open .mobile-menu__link:nth-child(1) { animation-delay: .05s; }
+.mobile-menu.is-open .mobile-menu__link:nth-child(2) { animation-delay: .10s; }
+.mobile-menu.is-open .mobile-menu__link:nth-child(3) { animation-delay: .15s; }
+.mobile-menu.is-open .mobile-menu__link:nth-child(4) { animation-delay: .20s; }
+.mobile-menu.is-open .mobile-menu__link:nth-child(5) { animation-delay: .25s; }
+.mobile-menu.is-open .mobile-menu__link:nth-child(6) { animation-delay: .30s; }
+.mobile-menu__label { transition: transform .3s var(--ease); }
+.mobile-menu__link:active .mobile-menu__label { transform: translateX(6px); }
+
+/* ---------- Bagian halaman publik ---------- */
+.gallery__img, .about__img { overflow: hidden; }
+.gallery__img img, .about__img img { transition: transform .9s var(--ease); }
+.gallery__item figcaption, .about__photo figcaption { transition: color .3s ease; }
+
+.principle__line, .service-item .divider { transition: background-color .35s ease; }
+.service-item__row { transition: transform .4s var(--ease); }
+.faq__item, .visit__item { transition: border-color .35s ease; }
+.closing__row a svg { transition: transform .4s var(--ease); }
+.closing__bar-links a { transition: color .2s ease; }
+
+/* ---------- Login ---------- */
+.login__editorial { animation: fade .6s ease both; }
+.login__headline  { animation: rise .8s var(--ease) .1s both; }
+.login__photo     { animation: unveil .9s cubic-bezier(.7, 0, .2, 1) .2s both; }
+.login__form      { animation: rise .7s var(--ease) .15s both; }
+
+/* ---------- Admin ---------- */
+.modal:not([hidden]) .modal__scrim  { animation: fade .2s ease-out both; }
+.modal:not([hidden]) .modal__dialog { animation: pop .25s var(--ease) both; }
+
+.dropdown__list:not([hidden]) { animation: drop .18s ease-out both; }
+.dropdown__trigger .icon { transition: transform .25s var(--ease); }
+.dropdown.is-open .dropdown__trigger .icon { transform: rotate(180deg); }
+
+.toast { animation: toastIn .35s var(--ease) both; }
+.toast.is-leaving { opacity: 0; transform: translateY(-6px); transition: opacity .3s ease, transform .3s ease; }
+
+.sidebar__item { transition: background-color .2s ease, color .2s ease, padding-left .25s var(--ease); }
+.table__row, .svc-row { transition: background-color .15s ease; }
+.pay-option span { transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .15s ease; }
+.pay-option:active span { transform: scale(.98); }
+.chip { transition: background-color .15s ease, transform .12s ease; }
+.chip:active { transform: scale(.96); }
+.item-row { animation: rise .3s var(--ease) both; }
+
+.metric__value, .total-row__value { font-variant-numeric: tabular-nums; }
+.bar__fill { transform-origin: left; animation: grow .9s var(--ease) .2s both; }
+.bar:nth-child(2) .bar__fill { animation-delay: .3s; }
+.bar:nth-child(3) .bar__fill { animation-delay: .4s; }
+.bar:nth-child(4) .bar__fill { animation-delay: .5s; }
+.bar:nth-child(5) .bar__fill { animation-delay: .6s; }
+.bar:nth-child(6) .bar__fill { animation-delay: .7s; }
+.bar:nth-child(7) .bar__fill { animation-delay: .8s; }
+
+/* ---------- Efek hover (hanya perangkat dengan mouse) ---------- */
+@media (hover: hover) {
+  .btn:hover .icon[data-icon="arrow-up-right"] { transform: translate(2px, -2px); }
+  .btn:hover .icon[data-icon="arrow-right"]    { transform: translateX(3px); }
+  .btn:hover .icon[data-icon="plus"]           { transform: rotate(90deg); }
+  .btn:hover .icon[data-icon="download"]       { transform: translateY(2px); }
+
+  .pubnav__links a:hover::after { transform: scaleX(1); transform-origin: left; }
+
+  .gallery__item:hover .gallery__img img,
+  .about__photo:hover .about__img img { transform: scale(1.05); }
+  .gallery__item:hover figcaption,
+  .about__photo:hover figcaption { color: var(--ink); }
+
+  .service-item:hover .service-item__row { transform: translateX(8px); }
+  .service-item:hover .divider { background: var(--ink); }
+
+  .principle:hover .principle__line { background: var(--paper); }
+  .faq__item:hover, .visit__item:hover { border-top-color: var(--ink); }
+  .closing__row a:hover svg { transform: translate(6px, -6px); }
+
+  .table__row:hover, .svc-row:hover { background: var(--hover-bg); }
+  .sidebar__item:not(.is-active):hover { padding-left: 16px; }
+  .pay-option:hover span { border-color: var(--ink); }
+}
+
+/* ---------- Hormati pengaturan "kurangi gerakan" ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important;
+  }
+}

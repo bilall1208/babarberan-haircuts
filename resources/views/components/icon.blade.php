@@ -1,7 +1,7 @@
 @props(['name', 'size' => 16, 'stroke' => 1.5])
 
 {{-- Ikon bergaya lucide (sama dengan vocabulary ikon di Figma UI kit) --}}
-<svg {{ $attributes->merge(['class' => 'icon']) }}
+<svg {{ $attributes->merge(['class' => 'icon']) }} data-icon="{{ $name }}"
      width="{{ $size }}" height="{{ $size }}" viewBox="0 0 24 24" fill="none"
      stroke="currentColor" stroke-width="{{ $stroke }}" stroke-linecap="round" stroke-linejoin="round"
      aria-hidden="true">
@@ -25,5 +25,6 @@
         @case('list-plus') <path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/> @break
         @case('printer')     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/> @break
         @case('file-search') <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><circle cx="11.5" cy="14.5" r="2.5"/><path d="M13.3 16.3 15 18"/> @break
+        @case('download') <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/> @break
     @endswitch
 </svg>

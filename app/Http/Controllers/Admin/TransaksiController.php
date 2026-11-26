@@ -10,6 +10,8 @@ use App\Models\TransaksiDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class TransaksiController extends Controller
@@ -29,7 +31,7 @@ class TransaksiController extends Controller
     {
         $this->izinkanLihat($transaksi);
 
-        $transaksi->load('detail');
+        $transaksi->load(['detail', 'user']);
         $totalSemua = $this->lingkup()->sum('total');
 
         return view('admin.transaksi.show', compact('transaksi', 'totalSemua'));
@@ -52,28 +54,30 @@ class TransaksiController extends Controller
         $data  = $this->validasi($request);
         $admin = Auth::user()->isAdmin();
 
+        $ids        = collect($data['items'])->pluck('layanan_id')->unique();
+        $layananMap = Layanan::where('aktif', true)->whereIn('id', $ids)->get()->keyBy('id');
+
+        if ($layananMap->count() !== $ids->count()) {
+            return back()->withInput()
+                ->withErrors(['items' => 'Ada layanan yang tidak aktif atau tidak ditemukan.']);
+        }
+
+        // kasir tidak bisa mengubah harga: selalu memakai harga dari daftar layanan
+        [$baris, $total] = $this->susunBaris($data['items'], $layananMap, $admin);
+        $bayar           = $this->pembayaran($data, $total);
+
         DB::beginTransaction();                                   // START TRANSACTION
         try {
-            $layanan = Layanan::where('aktif', true)->findOrFail($data['layanan_id']);
-
-            // kasir tidak bisa mengubah harga: selalu memakai harga dari daftar layanan
-            $harga    = $admin ? $data['harga'] : $layanan->harga;
-            $subtotal = $harga * $data['qty'];
-
             $transaksi = Transaksi::create([
                 'kode'    => 'TRX-' . now()->format('YmdHis') . '-' . random_int(100, 999),
                 'tanggal' => $data['tanggal'],
-                'total'   => $subtotal,
+                'total'   => $total,
                 'user_id' => Auth::id(),
-            ]);
+            ] + $bayar);
 
-            $transaksi->detail()->create([
-                'layanan_id'   => $layanan->id,
-                'nama_layanan' => $layanan->nama,
-                'harga'        => $harga,
-                'qty'          => $data['qty'],
-                'subtotal'     => $subtotal,
-            ]);
+            foreach ($baris as $b) {
+                $transaksi->detail()->create($b);
+            }
 
             DB::commit();                                         // COMMIT
         } catch (Throwable $e) {
@@ -92,21 +96,20 @@ class TransaksiController extends Controller
     {
         $data = $this->validasi($request);
 
+        $ids        = collect($data['items'])->pluck('layanan_id')->unique();
+        $layananMap = Layanan::whereIn('id', $ids)->get()->keyBy('id');
+
+        [$baris, $total] = $this->susunBaris($data['items'], $layananMap, true);
+        $bayar           = $this->pembayaran($data, $total);
+
         DB::beginTransaction();
         try {
-            $layanan  = Layanan::findOrFail($data['layanan_id']);
-            $subtotal = $data['harga'] * $data['qty'];
-
-            $transaksi->update(['tanggal' => $data['tanggal'], 'total' => $subtotal]);
+            $transaksi->update(['tanggal' => $data['tanggal'], 'total' => $total] + $bayar);
 
             $transaksi->detail()->delete();
-            $transaksi->detail()->create([
-                'layanan_id'   => $layanan->id,
-                'nama_layanan' => $layanan->nama,
-                'harga'        => $data['harga'],
-                'qty'          => $data['qty'],
-                'subtotal'     => $subtotal,
-            ]);
+            foreach ($baris as $b) {
+                $transaksi->detail()->create($b);
+            }
 
             DB::commit();
         } catch (Throwable $e) {
@@ -152,10 +155,11 @@ class TransaksiController extends Controller
 
     private function halaman(?Transaksi $edit = null)
     {
-        $layananId = $edit?->detail->first()?->layanan_id;
+        $ids = $edit ? $edit->detail->pluck('layanan_id')->all() : [];
 
+        // saat mengedit, layanan lama yang sudah nonaktif tetap ikut tampil
         $layanan = Layanan::where('aktif', true)
-            ->when($layananId, fn ($q) => $q->orWhere('id', $layananId))
+            ->when($ids, fn ($q) => $q->orWhereIn('id', $ids))
             ->orderBy('nama')->orderBy('harga')->get();
 
         $riwayat         = $this->lingkup()->with('detail')->orderByDesc('tanggal')->orderByDesc('id')->paginate(10);
@@ -173,26 +177,99 @@ class TransaksiController extends Controller
         ));
     }
 
+    /** Hitung semua baris layanan dan total transaksi. */
+    private function susunBaris(array $items, $layananMap, bool $pakaiHargaKiriman): array
+    {
+        $baris = [];
+        $total = 0;
+
+        foreach ($items as $item) {
+            $l        = $layananMap[$item['layanan_id']];
+            $harga    = $pakaiHargaKiriman ? (int) $item['harga'] : (int) $l->harga;
+            $qty      = (int) $item['qty'];
+            $subtotal = $harga * $qty;
+
+            $baris[] = [
+                'layanan_id'   => $l->id,
+                'nama_layanan' => $l->nama,
+                'harga'        => $harga,
+                'qty'          => $qty,
+                'subtotal'     => $subtotal,
+            ];
+            $total += $subtotal;
+        }
+
+        return [$baris, $total];
+    }
+
+    /** Tunai: uang diterima harus cukup. QRIS/Transfer: dianggap lunas pas. */
+    private function pembayaran(array $data, int $total): array
+    {
+        if ($data['metode_bayar'] === 'tunai') {
+            if (($data['jumlah_bayar'] ?? '') === '') {
+                throw ValidationException::withMessages(['jumlah_bayar' => 'Uang diterima wajib diisi.']);
+            }
+
+            $bayar = (int) $data['jumlah_bayar'];
+
+            if ($bayar < $total) {
+                throw ValidationException::withMessages([
+                    'jumlah_bayar' => 'Uang diterima kurang dari total (Rp' . number_format($total, 0, ',', '.') . ').',
+                ]);
+            }
+
+            return ['metode_bayar' => 'tunai', 'jumlah_bayar' => $bayar, 'kembalian' => $bayar - $total, 'referensi' => null];
+        }
+
+        return [
+            'metode_bayar' => $data['metode_bayar'],
+            'jumlah_bayar' => $total,
+            'kembalian'    => 0,
+            'referensi'    => $data['referensi'] ?? null,
+        ];
+    }
+
     private function validasi(Request $request): array
     {
-        $request->merge(['harga' => preg_replace('/\D/', '', (string) $request->input('harga'))]);
+        $items = collect($request->input('items', []))
+            ->filter(fn ($i) => is_array($i))
+            ->map(fn ($i) => [
+                'layanan_id' => $i['layanan_id'] ?? null,
+                'qty'        => preg_replace('/\D/', '', (string) ($i['qty'] ?? '')),
+                'harga'      => preg_replace('/\D/', '', (string) ($i['harga'] ?? '')),
+            ])->values()->all();
+
+        $request->merge([
+            'items'        => $items,
+            'jumlah_bayar' => preg_replace('/\D/', '', (string) $request->input('jumlah_bayar')),
+        ]);
 
         return $request->validate([
-            'tanggal'    => ['required', 'date'],
-            'layanan_id' => ['required', 'integer', 'exists:layanan,id'],
-            'harga'      => ['required', 'integer', 'min:0'],
-            'qty'        => ['required', 'integer', 'min:1', 'max:99'],
+            'tanggal'            => ['required', 'date'],
+            'items'              => ['required', 'array', 'min:1', 'max:20'],
+            'items.*.layanan_id' => ['required', 'integer', 'exists:layanan,id'],
+            'items.*.qty'        => ['required', 'integer', 'min:1', 'max:99'],
+            'items.*.harga'      => ['required', 'integer', 'min:0'],
+            'metode_bayar'       => ['required', Rule::in(['tunai', 'qris', 'transfer'])],
+            'jumlah_bayar'       => ['nullable', 'integer', 'min:0'],
+            'referensi'          => ['nullable', 'string', 'max:50'],
         ], [
-            'tanggal.required'    => 'Tanggal wajib diisi.',
-            'tanggal.date'        => 'Format tanggal tidak valid.',
-            'layanan_id.required' => 'Pilih layanan terlebih dahulu.',
-            'layanan_id.exists'   => 'Layanan tidak ditemukan.',
-            'harga.required'      => 'Harga satuan wajib diisi.',
-            'harga.integer'       => 'Harga satuan harus berupa angka.',
-            'qty.required'        => 'Jumlah wajib diisi.',
-            'qty.integer'         => 'Jumlah harus berupa angka.',
-            'qty.min'             => 'Jumlah minimal 1.',
-            'qty.max'             => 'Jumlah maksimal 99.',
+            'tanggal.required'            => 'Tanggal wajib diisi.',
+            'tanggal.date'                => 'Format tanggal tidak valid.',
+            'items.required'              => 'Tambahkan minimal satu layanan.',
+            'items.min'                   => 'Tambahkan minimal satu layanan.',
+            'items.max'                   => 'Maksimal 20 layanan per transaksi.',
+            'items.*.layanan_id.required' => 'Pilih layanan pada baris ini.',
+            'items.*.layanan_id.exists'   => 'Layanan tidak ditemukan.',
+            'items.*.qty.required'        => 'Jumlah wajib diisi.',
+            'items.*.qty.integer'         => 'Jumlah harus berupa angka.',
+            'items.*.qty.min'             => 'Jumlah minimal 1.',
+            'items.*.qty.max'             => 'Jumlah maksimal 99.',
+            'items.*.harga.required'      => 'Harga satuan wajib diisi.',
+            'items.*.harga.integer'       => 'Harga satuan harus berupa angka.',
+            'metode_bayar.required'       => 'Pilih metode pembayaran.',
+            'metode_bayar.in'             => 'Metode pembayaran tidak valid.',
+            'referensi.max'               => 'No. referensi maksimal 50 karakter.',
         ]);
     }
 }

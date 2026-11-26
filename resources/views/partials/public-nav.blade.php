@@ -15,7 +15,7 @@
 
         <div class="pubnav__links">
             @foreach ($links as $i => $link)
-                <a href="{{ $link['href'] }}" @class(['is-active' => $i === 0])>{{ $link['label'] }}</a>
+                <a href="{{ $link['href'] }}" data-label="{{ $link['label'] }}" @class(['is-active' => $i === 0])>{{ $link['label'] }}</a>
             @endforeach
         </div>
 

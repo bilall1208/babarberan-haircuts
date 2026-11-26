@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    @include('partials.favicon')
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Masuk Admin - Babarberan Haircuts</title>
@@ -8,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/babarberan.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/motion.css') }}">
 </head>
 <body>
 <div class="login">
@@ -62,5 +64,15 @@
     </main>
 
 </div>
+<script>
+  // halaman yang dipulihkan lewat tombol Back dimuat ulang agar tokennya segar
+  window.addEventListener('pageshow', function (e) { if (e.persisted) location.reload(); });
+
+  // cegah kirim ganda (klik dua kali / Enter lalu klik)
+  document.querySelector('.login__form').addEventListener('submit', function () {
+    var b = this.querySelector('button[type="submit"]');
+    if (b) b.disabled = true;
+  });
+</script>
 </body>
 </html>

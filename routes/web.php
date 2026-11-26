@@ -13,12 +13,12 @@ Route::get('/', [PublicController::class, 'home'])->name('home');
 
 Route::prefix('admin')->group(function () {
 
-    Route::middleware('guest')->group(function () {
+    Route::middleware(['guest', \App\Http\Middleware\NoCache::class])->group(function () {
         Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
         Route::post('/login', [AuthController::class, 'login'])->name('login.post');
     });
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', \App\Http\Middleware\NoCache::class])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
         // ---- Admin + Kasir ----
@@ -47,6 +47,8 @@ Route::prefix('admin')->group(function () {
 
             Route::get('/laporan', [LaporanController::class, 'index'])->name('admin.laporan.index');
             Route::get('/laporan/cetak', [LaporanController::class, 'cetak'])->name('admin.laporan.cetak');
+            Route::get('/laporan/pdf', [LaporanController::class, 'pdf'])->name('admin.laporan.pdf');
+            Route::get('/laporan/excel', [LaporanController::class, 'excel'])->name('admin.laporan.excel');
         });
     });
 });

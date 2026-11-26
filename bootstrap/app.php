@@ -19,5 +19,16 @@ return Application::configure(basePath: dirname(__DIR__))
         : route('admin.transaksi.index'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+    $exceptions->respond(function (\Symfony\Component\HttpFoundation\Response $response, \Throwable $e, \Illuminate\Http\Request $request) {
+        if ($response->getStatusCode() === 419) {
+            if ($request->is('admin/login')) {
+                return redirect()->route('login')
+                    ->withErrors(['login' => 'Halaman kedaluwarsa. Silakan masuk lagi.']);
+            }
+
+            return redirect()->back()->with('error', 'Sesi halaman habis. Muat ulang halaman lalu coba lagi.');
+        }
+
+        return $response;
+    });
     })->create();
